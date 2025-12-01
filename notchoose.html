@@ -657,17 +657,15 @@ document.querySelector('input[value="ส่งมอบ"]').addEventListener('ch
   if (e.target.checked) goToReportPage("report_send.html");
 });
 document.querySelector('input[value="ฝึกอบรม"]').addEventListener('change', (e) => {
-  if (e.target.checked) goToReportPage("report2.html");
+  if (e.target.checked) goToReportPage("seereport4.html");
 });
 document.querySelector('input[value="ออกแสดงสินค้า"]').addEventListener('change', (e) => {
-  if (e.target.checked) goToReportPage("report_send.html");
+  if (e.target.checked) goToReportPage("seereport2.html");
 });
 document.querySelector('input[value="ตรวจเช็ค/ซ่อม"]').addEventListener('change', (e) => {
-  if (e.target.checked) goToReportPage("report3.html");
+  if (e.target.checked) goToReportPage("seereport3.html");
 });
-document.querySelector('input[value="Visit"]').addEventListener('change', (e) => {
-  if (e.target.checked) goToReportPage("report2.html");
-});
+
 
 window.printEvent = async (id) => {
   const docRef = doc(db, "events", id);
