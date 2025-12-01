@@ -73,7 +73,7 @@ button:hover, .btnH:hover {
 
 </style>
 <div>
-  <a href="manageS.html" class="btnH">กลับไปหน้าปฏิทิน</a>
+  <a href="notchoose.html" class="btnH">กลับไปหน้าปฏิทิน</a>
 </div>
 </head>
 <body>
@@ -179,12 +179,13 @@ button:hover, .btnH:hover {
   import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyCua-GV6L-yz4cQNlSeQwRFNyOvzRQKO9Q",
-    authDomain: "events-92057.firebaseapp.com",
-    projectId: "events-92057",
-    storageBucket: "events-92057.appspot.com",
-    messagingSenderId: "33581889849",
-    appId: "1:33581889849:web:184cede4ec9f2eb363d0e8"
+    apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+    authDomain: "events-666d6.firebaseapp.com",
+    projectId: "events-666d6",
+    storageBucket: "events-666d6.firebasestorage.app",
+    messagingSenderId: "589078390914",
+    appId: "1:589078390914:web:480ce96137ffac835aac9b",
+    measurementId: "G-97GD75S814"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -311,6 +312,7 @@ button:hover, .btnH:hover {
       setTimeout(() => { window.location.href = "notchoose.html"; }, 1000);
     } catch (err) {
       document.getElementById("statusMsg").textContent = "❌ เกิดข้อผิดพลาด: " + err.message;
+      document.getElementById("statusMsg").style.color = "red";
     }
   };
 </script>
