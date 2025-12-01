@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard ระบบ AUTODIDACTIC (Admin) - Users with userId & password</title>
+
+  <!-- FullCalendar -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js" defer></script>
+
+  <style>
+    :root {
+      --red-600:#c72828;
+      --red-700:#9b1f1f;
+      --card-bg:#fff;
+      --muted:#666;
+    }
+    *{ box-sizing:border-box }
+    body{
+      font-family:'Prompt',system-ui;
+      margin:0; padding:0;
+      background:linear-gradient(to bottom,#fff,#fdeaea);
+      color:#111;
+    }
+
+    header{
+      background:linear-gradient(90deg,#c00,#f44336);
+      color:#fff;
+      padding:12px 20px;
+      display:flex; justify-content:space-between; align-items:center;
+      position:sticky; top:0; z-index:10;
+      box-shadow:0 4px 6px rgba(0,0,0,0.1);
+    }
+    .logo-title{display:flex; gap:12px; align-items:center;}
+    .logo-title img{width:50px; background:#fff8; padding:5px; border-radius:8px;}
+
+    .nav-btn{color:#fff; background:#0003; padding:8px 12px; border-radius:8px; text-decoration:none; font-weight:700;}
+
+    main{max-width:1100px; margin:24px auto; padding:0 16px;}
+    .grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+    @media(max-width:880px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      background:var(--card-bg);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.08);
+      border:2px solid #c7282815;
+    }
+
+    .btn{
+      background:var(--red-600); color:#fff; border:none;
+      padding:8px 14px; border-radius:10px; cursor:pointer;
+      font-weight:700;
+      box-shadow:0 6px 14px rgba(0,0,0,0.1);
+    }
+    .danger{ background:#ff5050; }
+    .small-muted{font-size:13px; color:#666;}
+
+    .list-item{
+      background:#fff6f6; border:1px solid #c7282825;
+      padding:10px; border-radius:8px; margin-bottom:10px;
+    }
+
+    /* Scroll lists */
+    #eventList, #leaveList, #userList {
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right:6px;
+    }
+    #eventList::-webkit-scrollbar,
+    #leaveList::-webkit-scrollbar,
+    #userList::-webkit-scrollbar{ width:6px; }
+    #eventList::-webkit-scrollbar-thumb,
+    #leaveList::-webkit-scrollbar-thumb,
+    #userList::-webkit-scrollbar-thumb{
+      background:#c00; border-radius:4px;
+    }
+    #eventList::-webkit-scrollbar-track,
+    #leaveList::-webkit-scrollbar-track,
+    #userList::-webkit-scrollbar-track{
+      background:#ffe5e5;
+    }
+
+    footer{
+      background:linear-gradient(90deg,#c00,#f44336);
+      color:#fff; padding:10px; text-align:center; margin-top:30px;
+    }
+
+    input[type="text"], input[type="password"], select {
+      padding:8px; border-radius:8px; border:1px solid #ddd;
+      font-size:14px;
+    }
+
+    .muted-note { font-size:12px; color:#7a7a7a; margin-top:6px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-title">
+    <img src="ad_logo-Photoroom.png" alt="logo" />
+    <div>
+      <div style="font-weight:800; font-size:18px;">🛠 ระบบจัดการ AUTODIDACTIC (Admin)</div>
+      <div style="font-size:12px; color:#eee;">Dashboard – รวม Users (name, password, userId) และระบบอื่น ๆ</div>
+    </div>
+  </div>
+  <nav><a href="calendar_admin.html" class="nav-btn">กลับหน้าหลัก</a></nav>
+</header>
+
+<main>
+  <div class="grid">
+
+    <!-- EVENTS -->
+    <section class="card">
+      <h3>📋 รายการงาน</h3>
+      <div id="eventList">⏳ Loading...</div>
+    </section>
+
+    <!-- LEAVES -->
+    <section class="card">
+      <h3>🏖 วันลา</h3>
+      <div id="leaveList">⏳ Loading...</div>
+    </section>
+
+    <!-- USERS -->
+    <section class="card" style="grid-column:1 / -1;">
+      <h3>👥 ผู้ใช้งานระบบ (Users)</h3>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px; align-items:center;">
+        <input id="userName" type="text" placeholder="ชื่อผู้ใช้ (name)" style="flex:1;">
+        <input id="userPassword" type="password" placeholder="รหัสผ่าน (password)" style="width:220px;">
+        <input id="userUserId" type="text" placeholder="userId (optional)" style="width:220px;">
+        <button id="addUserBtn" class="btn">เพิ่ม</button>
+      </div>
+      <div class="muted-note">หากไม่ใส่ userId ระบบจะใช้ document id เป็น userId อัตโนมัติ</div>
+
+      <div id="userList" style="margin-top:12px;">⏳ Loading...</div>
+    </section>
+
+    <!-- NAMES -->
+    <section class="card" style="grid-column:1 / -1;">
+      <h3>📑 รายชื่อ Worker / Assigner</h3>
+
+      <div style="display:flex; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+        <input id="newName" placeholder="เพิ่มชื่อ..." style="padding:8px; border:1px solid #ddd; border-radius:8px;">
+        <select id="nameType" style="padding:8px; border-radius:8px;">
+          <option value="workers">ผู้ปฏิบัติงาน</option>
+          <option value="assigners">คนสั่งงาน</option>
+        </select>
+        <button id="addNameBtn" class="btn">เพิ่มชื่อ</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px;">
+        <div><h4 class="small-muted">Workers</h4><div id="workerList">⏳ Loading...</div></div>
+        <div><h4 class="small-muted">Assigners</h4><div id="assignerList">⏳ Loading...</div></div>
+      </div>
+
+    </section>
+
+    <!-- HOLIDAY -->
+    <section class="card" style="grid-column:1 / -1;">
+      <h3>🏢 ปฏิทินวันหยุด</h3>
+      <div id="holidayCalendar" style="min-height:300px;"></div>
+    </section>
+
+  </div>
+</main>
+
+<footer>© 2025 AUTODIDACTIC</footer>
+
+<!-- FIREBASE + APP LOGIC -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    deleteDoc,
+    updateDoc,
+    doc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  /* --------------- config --------------- */
+  const firebaseConfig = {
+    apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+    authDomain: "events-666d6.firebaseapp.com",
+    projectId: "events-666d6",
+    storageBucket: "events-666d6.firebasestorage.app",
+    messagingSenderId: "589078390914",
+    appId: "1:589078390914:web:480ce96137ffac835aac9b",
+    measurementId: "G-97GD75S814"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const $ = id => document.getElementById(id);
+
+  /* --------------- helper: ensure defaults (optional) --------------- */
+  async function ensureDefaultDocs(){
+    const w = await getDocs(collection(db,"workers"));
+    if (w.empty) {
+      await addDoc(collection(db,"workers"), { name: "User A" });
+      await addDoc(collection(db,"workers"), { name: "User B" });
+    }
+    const a = await getDocs(collection(db,"assigners"));
+    if (a.empty) await addDoc(collection(db,"assigners"), { name: "Admin" });
+
+    const l = await getDocs(collection(db,"leaves"));
+    if (l.empty) {
+      await addDoc(collection(db,"leaves"), {
+        name: "User A", reason: "ประชุม", start: "2025-01-10", end: "2025-01-10"
+      });
+    }
+
+    const h = await getDocs(collection(db,"holidays"));
+    if (h.empty) {
+      await addDoc(collection(db,"holidays"), { name: "วันขึ้นปีใหม่", date: "2025-01-01" });
+    }
+
+    const e = await getDocs(collection(db,"events"));
+    if (e.empty) {
+      await addDoc(collection(db,"events"), {
+        jobNumber: "JOB-000",
+        job: "งานตัวอย่าง",
+        location: "สำนักงานใหญ่",
+        details: "เอกสารตัวอย่างจากระบบ",
+        orderDate: "2025-01-01",
+        start: "2025-01-01",
+        end: "2025-01-02",
+        workers: ["User A"],
+        assigners: ["Admin"],
+        jobTypes: ["ทดสอบ"],
+        contactPerson: "Contact",
+        phoneNumber: "0000000000",
+        status: "รออนุมัติ"
+      });
+    }
+  }
+
+  /* --------------- EVENTS --------------- */
+  async function loadEvents(){
+    const box = $("eventList");
+    box.innerHTML = "";
+    const snap = await getDocs(collection(db,"events"));
+    if(snap.empty) { box.innerHTML = "<i>ไม่มีงาน</i>"; return; }
+
+    snap.forEach(d=>{
+      const v = d.data();
+      box.insertAdjacentHTML("beforeend",`
+        <div class="list-item">
+          <b>${v.jobNumber || '-'}</b> — ${v.location || '-'}<br>
+          <span class="small-muted">${v.start || '-'} → ${v.end || '-'}</span>
+        </div>
+      `);
+    });
+  }
+
+  /* --------------- LEAVES --------------- */
+  async function loadLeaves(){
+    const box = $("leaveList");
+    box.innerHTML = "";
+    const snap = await getDocs(collection(db,"leaves"));
+    if(snap.empty) { box.innerHTML = "<i>ไม่มีวันลา</i>"; return; }
+
+    snap.forEach(d=>{
+      const v = d.data();
+      box.insertAdjacentHTML("beforeend",`
+        <div class="list-item">
+          <b>${v.name}</b> — <span class="small-muted">${v.reason}</span><br>
+          <span class="small-muted">${v.start} → ${v.end}</span><br>
+          <div style="margin-top:8px;">
+            <button class="btn danger" onclick="delLeave('${d.id}')">🗑 ลบ</button>
+          </div>
+        </div>
+      `);
+    });
+  }
+
+  window.delLeave = async (id)=>{
+    if(!confirm("ลบวันลา?")) return;
+    await deleteDoc(doc(db,"leaves",id));
+    loadLeaves();
+  };
+
+  /* --------------- USERS (name, password, userId) --------------- */
+  async function loadUsers(){
+    const box = $("userList");
+    box.innerHTML = "";
+    const snap = await getDocs(collection(db,"users"));
+    if(snap.empty) { box.innerHTML = "<i>ไม่มีผู้ใช้</i>"; return; }
+
+    snap.forEach(d=>{
+      const v = d.data();
+      // show fields name, password, userId
+      const name = v.name || "-";
+      const password = v.password || "-";
+      const userId = v.userId || d.id;
+
+      box.insertAdjacentHTML("beforeend",`
+        <div class="list-item">
+          <div><b>ชื่อ:</b> ${escapeHtml(name)}</div>
+          <div><b>รหัสผ่าน:</b> ${escapeHtml(password)}</div>
+          <div><b>UserID:</b> ${escapeHtml(userId)}</div>
+          <div style="margin-top:8px;">
+            <button class="btn" onclick="editUserPrompt('${d.id}','${escapeJs(name)}','${escapeJs(password)}','${escapeJs(userId)}')">✏ แก้ไข</button>
+            <button class="btn danger" onclick="delUser('${d.id}')">🗑 ลบ</button>
+          </div>
+        </div>
+      `);
+    });
+  }
+
+  window.delUser = async (id)=>{
+    if(!confirm("ต้องการลบผู้ใช้หรือไม่?")) return;
+    await deleteDoc(doc(db,"users",id));
+    loadUsers();
+  };
+
+  // add user: if userId input empty, after addDoc update the document to set userId = doc.id
+  $("addUserBtn").addEventListener("click", async ()=>{
+    const name = $("userName").value.trim();
+    const password = $("userPassword").value; // allow empty? we require non-empty
+    let userId = $("userUserId").value.trim();
+
+    if(!name) return alert("กรุณากรอกชื่อ (name)");
+    if(!password) return alert("กรุณากรอกรหัสผ่าน (password)");
+
+    // add
+    const ref = await addDoc(collection(db,"users"), { name, password, userId: userId || "" });
+
+    // if user didn't provide userId, set it to doc id
+    if(!userId){
+      await updateDoc(doc(db,"users", ref.id), { userId: ref.id });
+    }
+
+    // clear inputs
+    $("userName").value = "";
+    $("userPassword").value = "";
+    $("userUserId").value = "";
+
+    loadUsers();
+  });
+
+  // Prompt-based edit (name, password, userId)
+  window.editUserPrompt = async (docId, oldName, oldPassword, oldUserId) => {
+    // decode escaped values
+    const namePrompt = prompt("แก้ไขชื่อ (name):", decodeURIComponent(oldName));
+    if (namePrompt === null) return; // cancel
+    const passPrompt = prompt("แก้ไขรหัสผ่าน (password):", decodeURIComponent(oldPassword));
+    if (passPrompt === null) return;
+    const uidPrompt = prompt("แก้ไข userId:", decodeURIComponent(oldUserId));
+    if (uidPrompt === null) return;
+
+    if (!namePrompt.trim()) return alert("ชื่อไม่สามารถว่างได้");
+    if (!passPrompt) return alert("รหัสผ่านไม่สามารถว่างได้");
+
+    await updateDoc(doc(db,"users", docId), {
+      name: namePrompt.trim(),
+      password: passPrompt,
+      userId: uidPrompt.trim() || docId
+    });
+
+    loadUsers();
+  };
+
+  /* --------------- WORKERS / ASSIGNERS --------------- */
+  async function loadNames(){
+    $("workerList").innerHTML = "";
+    $("assignerList").innerHTML = "";
+
+    const ws = await getDocs(collection(db,"workers"));
+    if(ws.empty) $("workerList").innerHTML = "<i>ไม่มีข้อมูล</i>";
+    ws.forEach(d=>{
+      $("workerList").insertAdjacentHTML("beforeend",`
+        <div class="list-item">
+          ${escapeHtml(d.data().name)}
+          <div style="margin-top:8px;"><button class="btn danger" onclick="delName('workers','${d.id}')">ลบ</button></div>
+        </div>
+      `);
+    });
+
+    const as = await getDocs(collection(db,"assigners"));
+    if(as.empty) $("assignerList").innerHTML = "<i>ไม่มีข้อมูล</i>";
+    as.forEach(d=>{
+      $("assignerList").insertAdjacentHTML("beforeend",`
+        <div class="list-item">
+          ${escapeHtml(d.data().name)}
+          <div style="margin-top:8px;"><button class="btn danger" onclick="delName('assigners','${d.id}')">ลบ</button></div>
+        </div>
+      `);
+    });
+  }
+
+  window.delName = async (col,id)=>{
+    if(!confirm("ลบชื่อนี้?")) return;
+    await deleteDoc(doc(db,col,id));
+    loadNames();
+  };
+
+  $("addNameBtn").addEventListener("click", async ()=>{
+    const name = $("newName").value.trim();
+    const type = $("nameType").value;
+    if(!name) return alert("กรุณากรอกชื่อ");
+    await addDoc(collection(db,type), { name });
+    $("newName").value = "";
+    loadNames();
+  });
+
+  /* --------------- HOLIDAY CALENDAR --------------- */
+  async function loadHolidayEvents(){
+    const snap = await getDocs(collection(db,"holidays"));
+    const arr = [];
+    snap.forEach(d=>{
+      const x = d.data();
+      arr.push({ id:d.id, title:x.name, start:x.date, allDay:true });
+    });
+    return arr;
+  }
+
+  async function initHoliday(){
+    const list = await loadHolidayEvents();
+    const cal = new FullCalendar.Calendar( $("holidayCalendar"), {
+      initialView:"dayGridMonth",
+      selectable:true,
+      events:list,
+
+      dateClick: async (info)=>{
+        const name = prompt("ชื่อวันหยุด?");
+        if(!name) return;
+        const ref = await addDoc(collection(db,"holidays"), { name, date:info.dateStr });
+        cal.addEvent({ id:ref.id, title:name, start:info.dateStr });
+      },
+
+      eventClick: async (info)=>{
+        if(!confirm(`ลบวันหยุด "${info.event.title}" ?`)) return;
+        await deleteDoc(doc(db,"holidays",info.event.id));
+        info.event.remove();
+      }
+    });
+    cal.render();
+  }
+
+  /* --------------- helpers --------------- */
+  function escapeHtml(str){
+    if(!str) return "";
+    return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+  }
+  function escapeJs(str){
+    if(str === undefined || str === null) return "";
+    return encodeURIComponent(String(str));
+  }
+
+  /* --------------- INIT --------------- */
+  (async ()=>{
+    try{ await ensureDefaultDocs(); } catch(e){ console.warn("ensureDefaultDocs failed", e); }
+    await loadEvents();
+    await loadLeaves();
+    await loadUsers();
+    await loadNames();
+    await initHoliday();
+  })();
+</script>
+
+</body>
+</html>
