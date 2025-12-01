@@ -73,7 +73,8 @@
     .action-row{ margin-top:8px; display:flex; gap:8px; flex-wrap:wrap; }
     .danger { background:#ff6b6b; }
     /* จำกัด 5 รายการ + Scroll bar */
-#eventList,
+#eventListPending,
+#eventListCompleted,
 #leaveList {
   max-height: 350px;   /* ความสูงพอดีกับ 5 รายการ */
   overflow-y: auto;
@@ -81,18 +82,21 @@
 }
 
 /* เพื่อความสวยงามของ scrollbar */
-#eventList::-webkit-scrollbar,
+#eventListPending::-webkit-scrollbar,
+#eventListCompleted::-webkit-scrollbar,
 #leaveList::-webkit-scrollbar {
   width: 6px;
 }
 
-#eventList::-webkit-scrollbar-thumb,
+#eventListPending::-webkit-scrollbar-thumb,
+#eventListCompleted::-webkit-scrollbar-thumb,
 #leaveList::-webkit-scrollbar-thumb {
   background: #c00;
   border-radius: 4px;
 }
 
-#eventList::-webkit-scrollbar-track,
+#eventListPending::-webkit-scrollbar-track,
+#eventListCompleted::-webkit-scrollbar-track,
 #leaveList::-webkit-scrollbar-track {
   background: #ffe5e5;
 }
@@ -124,16 +128,22 @@
 
   <div class="grid">
 
-    <!-- Events -->
-    <section class="card" id="eventsCard">
-      <h3>📋 รายการงาน (Admin)</h3>
-      <div id="eventList" class="small-muted">⏳ กำลังโหลด...</div>
+    <!-- Events - กำลังดำเนินการ -->
+    <section class="card" id="eventsCardPending">
+      <h3>📋 รายการงาน (กำลังดำเนินการ)</h3>
+      <div id="eventListPending" class="small-muted">⏳ กำลังโหลด...</div>
     </section>
 
     <!-- Leaves -->
     <section class="card" id="leavesCard">
       <h3>🏖 รายการวันลา</h3>
       <div id="leaveList" class="small-muted">⏳ กำลังโหลด...</div>
+    </section>
+
+    <!-- Events - เรียบร้อย -->
+    <section class="card" id="eventsCardCompleted">
+      <h3>📋 รายการงาน (เรียบร้อย)</h3>
+      <div id="eventListCompleted" class="small-muted">⏳ กำลังโหลด...</div>
     </section>
 
     <!-- Names (span full) -->
@@ -247,34 +257,74 @@
 
   /* ---------- Load Events ---------- */
   async function loadEvents(){
-    const eventList = $("eventList");
-    eventList.innerHTML = "⏳ กำลังโหลด...";
+    const eventListPending = $("eventListPending");
+    const eventListCompleted = $("eventListCompleted");
+    
+    eventListPending.innerHTML = "⏳ กำลังโหลด...";
+    eventListCompleted.innerHTML = "⏳ กำลังโหลด...";
+    
     const snap = await getDocs(collection(db,"events"));
-    if (snap.empty) { eventList.innerHTML = "<i>ไม่มีข้อมูลงาน</i>"; return; }
+    
+    if (snap.empty) { 
+      eventListPending.innerHTML = "<i>ไม่มีข้อมูลงาน</i>"; 
+      eventListCompleted.innerHTML = "<i>ไม่มีข้อมูลงาน</i>"; 
+      return; 
+    }
 
-    eventList.innerHTML = "";
+    eventListPending.innerHTML = "";
+    eventListCompleted.innerHTML = "";
+    
+    let hasPending = false;
+    let hasCompleted = false;
+
     snap.forEach(docSnap=>{
       const d = docSnap.data();
-      const div = document.createElement("div");
-      div.className = "list-item";
-      div.innerHTML = `
-        <div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">
-          <div>
-            <strong>${d.jobNumber || "-"}</strong> — ${d.location || "-"}<br>
-            <span class="small-muted">${(d.jobTypes||[]).join(", ")} • ${d.start || "-"} → ${d.end || "-"}</span>
-          </div>
-          <div style="text-align:right">
-            <div class="tiny">${(d.assigners||[]).join(", ")}</div>
-            <div class="action-row" style="justify-content:flex-end; margin-top:8px;">
-              <button class="btn" onclick="printEvent('${docSnap.id}')">🖨 พิมพ์</button>
-              <button class="btn" onclick="editEvent('${docSnap.id}')">✏ แก้ไข</button>
-              <button class="btn danger" onclick="deleteEvent('${docSnap.id}')">🗑 ลบ</button>
+      const status = d.status || "";
+      
+      // ฟังก์ชันสร้าง element
+      const createEventElement = () => {
+        const div = document.createElement("div");
+        div.className = "list-item";
+        div.innerHTML = `
+          <div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">
+            <div>
+              <strong>${d.jobNumber || "-"}</strong> — ${d.location || "-"}<br>
+              <span class="small-muted">${(d.jobTypes||[]).join(", ")} • ${d.start || "-"} → ${d.end || "-"}</span><br>
+              <span class="tiny" style="color: ${status === 'อนุมัติ' ? '#28a745' : status === 'รออนุมัติ' ? '#ffc107' : status === 'เรียบร้อย' ? '#007bff' : '#dc3545'};">
+                สถานะ: ${status}
+              </span>
+            </div>
+            <div style="text-align:right">
+              <div class="tiny">${(d.assigners||[]).join(", ")}</div>
+              <div class="action-row" style="justify-content:flex-end; margin-top:8px;">
+                <button class="btn" onclick="printEvent('${docSnap.id}')">🖨 พิมพ์</button>
+                <button class="btn" onclick="editEvent('${docSnap.id}')">✏ แก้ไข</button>
+                <button class="btn danger" onclick="deleteEvent('${docSnap.id}')">🗑 ลบ</button>
+              </div>
             </div>
           </div>
-        </div>
-      `;
-      eventList.appendChild(div);
+        `;
+        return div;
+      };
+      
+      // แยกแสดงตามสถานะ
+      if (status === "อนุมัติ" || status === "รออนุมัติ") {
+        eventListPending.appendChild(createEventElement());
+        hasPending = true;
+      } 
+      
+      if (status === "เรียบร้อย" || status === "ไม่เรียบร้อย") {
+        eventListCompleted.appendChild(createEventElement());
+        hasCompleted = true;
+      }
     });
+    
+    if (!hasPending) {
+      eventListPending.innerHTML = "<i>ไม่มีงานที่กำลังดำเนินการ</i>";
+    }
+    if (!hasCompleted) {
+      eventListCompleted.innerHTML = "<i>ไม่มีงานที่เสร็จสมบูรณ์</i>";
+    }
   }
 
   window.deleteEvent = async (id) => {
