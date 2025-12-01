@@ -14,7 +14,7 @@
 
 <style>
 body { font-family: "TH Sarabun New", sans-serif; background: #f8fafc; margin:0; font-size:14px; }
-.header-bar { display:flex; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#c82a11,#ff0101); color:#fff; padding:12px 20px; }
+.header-bar { display:flex; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#c82a11,#ff0101); color:#fff; padding:12px 10px; }
 .header-bar h1 { margin:0; font-size:16px; font-weight:600; }
 .header-bar button { background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:8px; padding:6px 12px; cursor:pointer; }
 .header-bar button:hover { background:rgba(255,255,255,0.25); }
@@ -25,11 +25,11 @@ body { font-family: "TH Sarabun New", sans-serif; background: #f8fafc; margin:0;
 .btn.secondary { background:#64748b; }
 .btn.secondary:hover { background:#475569; }
 
-.container { width:210mm; min-height:297mm; background:#fff; margin:10px auto; padding:18mm; box-shadow:0 6px 20px rgba(0,0,0,0.08); border-radius:12px; box-sizing:border-box; }
+.container { width:210mm;  background:#fff; margin:10px auto; padding:18mm; box-shadow:0 6px 20px rgba(0,0,0,0.08); border-radius:12px; box-sizing:border-box; }
 
-.header-title { text-align:center; margin-bottom:10px; }
-.header-title h2 { margin:0; text-decoration:underline; font-weight:700; font-size:18px; }
-.header-title .jobno { text-align:right; font-size:14px; margin-top:4px; }
+.header-title { text-align:center; margin-bottom:4mm; }
+.header-title h2 { margin:0 0 2mm 0; text-decoration:underline; font-weight:700; font-size:18px; }
+.header-title .jobno { text-align:right; font-size:14px; margin-top:0; }
 
 .line { border-bottom:1px dotted #000; display:inline-block; min-width:35mm; padding-bottom:1px; text-align:center; }
 .lines { border-bottom:1px dotted #000; display:inline-block; min-width:35mm; padding-bottom:1px; text-align:center; }
@@ -37,8 +37,8 @@ body { font-family: "TH Sarabun New", sans-serif; background: #f8fafc; margin:0;
 .line3 { border-bottom:1px dotted #000; display:inline-block; min-width:138mm; padding-bottom:1px; text-align:center; }
 .line4 { border-bottom:1px dotted #000; display:inline-block; min-width:60mm; padding-bottom:1px; text-align:center; }
 .line5 { border-bottom:1px dotted #000; display:inline-block; min-width:125mm; padding-bottom:1px; text-align:center; }
-.line6 { border-bottom:1px dotted #000; display:inline-block; min-width:180mm; padding-bottom:1px; text-align:center; }
-.section { margin-top:6mm; line-height:1.5; }
+.line6 { border-bottom:1px dotted #000; display:inline-block; min-width:180mm; padding-bottom:1px; text-align:center; min-height:10mm; vertical-align:top; }
+.section { margin-top:4mm; line-height:1.5; }
 textarea { width:100%; border:none; border-bottom:1px dotted #000; resize:none; font-size:14px; background:transparent; padding:3px 0; }
 input[type="checkbox"] { transform:scale(1.1); margin-right:3px; }
 .signature { margin-top:18mm; display:flex; justify-content:space-between; }
@@ -66,19 +66,19 @@ input[type="text"] { padding:8px 12px; font-size:14px; border:1px solid #ddd; bo
 
 <div id="report" class="container">
 
-  <!-- 🔹 หัวข้อ + เลขที่สั่งงาน -->
+  <!-- 🔹 หัวข้อ + เลขที่สั่งงาน (กระชับขึ้น) -->
   <div class="header-title">
     <h2>ใบสั่งงาน / ใบรายงานผลการปฏิบัติงาน</h2>
     <div class="jobno">เลขที่: <span id="jobNo" class="line"></span></div>
   </div>
 
-  <div class="section">
+  <div class="section" style="margin-top:3mm;">
     ชื่อผู้สั่งงาน: <span id="assignedBy" class="line"></span>
     วันที่สั่งงาน: <span id="orderDate" class="line"></span>
     กำหนดเสร็จงาน: <span id="deadlines" class="line"></span><br>
   </div>
 
-  <div class="section">
+  <div class="section" style="margin-top:3mm;">
     ลักษณะงาน:
     <div style="text-align: right;">เลขที่ JOB: <span id="docNo" class="line"></span></div>
     <label><input type="checkbox" id="type1"> ส่งมอบ</label>
@@ -88,11 +88,17 @@ input[type="text"] { padding:8px 12px; font-size:14px; border:1px solid #ddd; bo
     <label><input type="checkbox" id="type5"> อื่น ๆ</label>
   </div>
 
-  <div class="section">
-    รายละเอียดงาน: <span id="details" class="line5"></span><br><br>
+  <div class="section" style="margin-top:3mm;">
+    รายละเอียดงาน:<br>
+    <div style="border-bottom:1px dotted #000; min-height:8mm; padding:2px 0; line-height:1.8;">
+      <span id="details"></span>
+    </div>
+    <div style="border-bottom:1px dotted #000; min-height:8mm; padding:2px 0; line-height:1.8;">
+      <span id="details2"></span>
+    </div>
   </div>
 
-  <div class="section">
+  <div class="section" style="margin-top:4mm;">
     ออกเดินทางวันที่: <span id="date" class="line2"></span>
     เดินทางกลับวันที่: <span id="deadline" class="line2"></span>
   </div>
@@ -111,7 +117,7 @@ input[type="text"] { padding:8px 12px; font-size:14px; border:1px solid #ddd; bo
   </div>
 
   <div>
-    <br><br>---------------------------------------------------------------------------------------------------------------------------------------------
+    <br><br>---------------------------------------------------------------------------------------------------------------------------------
   </div>
 
   <div class="section">
@@ -177,9 +183,9 @@ const signatureImg = document.getElementById("signatureImg");
 function getParamsFromURL() {
   const urlParams = new URLSearchParams(window.location.search);
   return {
-    jobNumber: urlParams.get('job'),      // ✅ รับจาก ?job=
-    start: urlParams.get('start'),         // ✅ รับจาก &start=
-    end: urlParams.get('end')             // ✅ รับจาก &end=
+    jobNumber: urlParams.get('job'),
+    start: urlParams.get('start'),
+    end: urlParams.get('end')
   };
 }
 
@@ -193,7 +199,6 @@ async function searchAndDisplay(jobNum = null) {
   }
 
   try {
-    // ค้นหาข้อมูลจาก Firebase ที่ตรงกับ jobNumber
     const q = query(collection(db, "events"), where("jobNumber", "==", jobNumber));
     const querySnapshot = await getDocs(q);
 
@@ -202,13 +207,12 @@ async function searchAndDisplay(jobNum = null) {
       return;
     }
 
-    // ดึงข้อมูลชุดแรกที่พบ
     const data = querySnapshot.docs[0].data();
 
     // ลายเซ็น
     signatureImg.style.display = (data.status === "อนุมัติ" || data.status === "เรียบร้อย" || data.status === "ไม่เรียบร้อย") ? "block" : "none";
 
-    // ใส่ข้อมูลในฟอร์ม (ข้อความจะอยู่ตรงกลางเส้นประ)
+    // ใส่ข้อมูลในฟอร์ม
     document.getElementById("docNo").textContent = data.jobNumber || "";
     document.getElementById("jobNo").textContent = data.job || "";
     document.getElementById("assignedBy").textContent = (data.assigners || []).join(", ");
@@ -216,7 +220,18 @@ async function searchAndDisplay(jobNum = null) {
     document.getElementById("orderDate").textContent = data.orderDate || "";
     document.getElementById("deadline").textContent = data.end || "";
     document.getElementById("deadlines").textContent = data.end || "";
-    document.getElementById("details").textContent = data.details || "";
+    
+    // แบ่งรายละเอียดเป็น 2 บรรทัด
+    const detailsText = data.details || "";
+    const maxLength = 100; // ความยาวสูงสุดต่อบรรทัด
+    if (detailsText.length > maxLength) {
+      document.getElementById("details").textContent = detailsText.substring(0, maxLength);
+      document.getElementById("details2").textContent = detailsText.substring(maxLength);
+    } else {
+      document.getElementById("details").textContent = detailsText;
+      document.getElementById("details2").textContent = "";
+    }
+    
     document.getElementById("location").textContent = data.location || "";
     document.getElementById("title").textContent = (data.workers || []).join(", ");
     document.getElementById("contactName").textContent = data.contactPerson || "-";
@@ -262,14 +277,11 @@ window.addEventListener('DOMContentLoaded', () => {
   const params = getParamsFromURL();
   
   if (params.jobNumber) {
-    // กรอก jobNumber ลงในช่อง input
     jobNumberInput.value = params.jobNumber;
     
-    // แสดง start และ end date ถ้ามี (ไม่บังคับ)
     if (params.start) console.log("วันเริ่ม:", params.start);
     if (params.end) console.log("วันสิ้นสุด:", params.end);
     
-    // ค้นหาข้อมูลอัตโนมัติ
     searchAndDisplay(params.jobNumber);
   }
 });
@@ -278,13 +290,25 @@ window.addEventListener('DOMContentLoaded', () => {
 document.getElementById("printBtn").addEventListener("click", () => {
   const element = document.getElementById("report");
 
+  // ปรับ style ชั่วคราวก่อนปริ้น
+  const originalPadding = element.style.paddingTop;
+  element.style.paddingTop = "8mm";
+  
+  const headerTitle = element.querySelector(".header-title");
+  const originalHeaderMargin = headerTitle.style.marginBottom;
+  headerTitle.style.marginBottom = "2mm";
+
   html2pdf().set({
-    margin: 10,
+    margin: [5, 10, 10, 10], // [top, right, bottom, left]
     filename: "ใบสั่งงาน.pdf",
     image: { type: "jpeg", quality: 1 },
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-  }).from(element).save();
+  }).from(element).save().then(() => {
+    // คืนค่า style เดิม
+    element.style.paddingTop = originalPadding;
+    headerTitle.style.marginBottom = originalHeaderMargin;
+  });
 });
 </script>
 </body>
