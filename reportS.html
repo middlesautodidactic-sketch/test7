@@ -293,6 +293,10 @@ document.getElementById("printBtn").addEventListener("click", () => {
   // ปรับ style ชั่วคราวก่อนปริ้น
   const originalPadding = element.style.padding;
   const originalFontSize = element.style.fontSize;
+
+    // ดึงเลข Job Number จากฟอร์ม
+  const jobNumber = document.getElementById("docNo").textContent.trim() || "ใบสั่งงาน";
+  const filename = `${jobNumber}.pdf`;
   
   element.style.padding = "8mm 15mm";
   element.style.fontSize = "13px";
@@ -309,8 +313,8 @@ document.getElementById("printBtn").addEventListener("click", () => {
   headerTitle.style.marginBottom = "1mm";
 
   html2pdf().set({
-    margin: [3, 8, 3, 8], // [top, right, bottom, left] - ลด margin ให้พอดีหน้าเดียว
-    filename: "ใบสั่งงาน.pdf",
+    margin: [3, 0, 3, 0], // [top, right, bottom, left] - ลด margin ให้พอดีหน้าเดียว
+    filename: filename,
     image: { type: "jpeg", quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
