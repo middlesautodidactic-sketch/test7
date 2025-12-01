@@ -136,18 +136,20 @@ button:hover, .btnM:hover { background: #900; }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyCua-GV6L-yz4cQNlSeQwRFNyOvzRQKO9Q",
-  authDomain: "events-92057.firebaseapp.com",
-  projectId: "events-92057",
-  storageBucket: "events-92057.appspot.com",
-  messagingSenderId: "33581889849",
-  appId: "1:33581889849:web:184cede4ec9f2eb363d0e8"
-};
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  const firebaseConfig = {
+    apiKey: "AIzaSyAXayBBLVSohNCIsnlWRq6rD0BUbW70MGk",
+    authDomain: "events-666d6.firebaseapp.com",
+    projectId: "events-666d6",
+    storageBucket: "events-666d6.firebasestorage.app",
+    messagingSenderId: "589078390914",
+    appId: "1:589078390914:web:480ce96137ffac835aac9b",
+    measurementId: "G-97GD75S814"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
 // ✅ ฟังก์ชันบันทึกข้อมูล
 window.saveFile = async function() {
