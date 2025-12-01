@@ -52,7 +52,7 @@ input[type="text"] { padding:8px 12px; font-size:14px; border:1px solid #ddd; bo
 
 <div class="header-bar">
   <h1>📄 ใบสั่งงาน / รายงานผลการปฏิบัติงาน</h1>
-  <button onclick="window.location.href='notchoose.html'">⬅ กลับหน้าแรก</button>
+  <button onclick="window.location.href='admin.html'">⬅ กลับหน้าแรก</button>
 </div>
 
 <div class="btn-group">
@@ -117,7 +117,7 @@ input[type="text"] { padding:8px 12px; font-size:14px; border:1px solid #ddd; bo
   </div>
 
   <div>
-    <br><br>---------------------------------------------------------------------------------------------------------------------------------
+    <br><br>--------------------------------------------------------------------------------------------------------------------------------
   </div>
 
   <div class="section">
@@ -291,23 +291,41 @@ document.getElementById("printBtn").addEventListener("click", () => {
   const element = document.getElementById("report");
 
   // ปรับ style ชั่วคราวก่อนปริ้น
-  const originalPadding = element.style.paddingTop;
-  element.style.paddingTop = "8mm";
+  const originalPadding = element.style.padding;
+  const originalFontSize = element.style.fontSize;
+
+    // ดึงเลข Job Number จากฟอร์ม
+  const jobNumber = document.getElementById("docNo").textContent.trim() || "ใบสั่งงาน";
+  const filename = `${jobNumber}.pdf`;
+  
+  element.style.padding = "8mm 15mm";
+  element.style.fontSize = "13px";
+  
+  const sections = element.querySelectorAll(".section");
+  const originalMargins = [];
+  sections.forEach((section, index) => {
+    originalMargins[index] = section.style.marginTop;
+    section.style.marginTop = "2mm";
+  });
   
   const headerTitle = element.querySelector(".header-title");
   const originalHeaderMargin = headerTitle.style.marginBottom;
-  headerTitle.style.marginBottom = "2mm";
+  headerTitle.style.marginBottom = "1mm";
 
   html2pdf().set({
-    margin: [5, 10, 10, 10], // [top, right, bottom, left]
-    filename: "ใบสั่งงาน.pdf",
-    image: { type: "jpeg", quality: 1 },
+    margin: [3, 0, 3, 0], // [top, right, bottom, left] - ลด margin ให้พอดีหน้าเดียว
+    filename: filename,
+    image: { type: "jpeg", quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
   }).from(element).save().then(() => {
     // คืนค่า style เดิม
-    element.style.paddingTop = originalPadding;
+    element.style.padding = originalPadding;
+    element.style.fontSize = originalFontSize;
     headerTitle.style.marginBottom = originalHeaderMargin;
+    sections.forEach((section, index) => {
+      section.style.marginTop = originalMargins[index];
+    });
   });
 });
 </script>
